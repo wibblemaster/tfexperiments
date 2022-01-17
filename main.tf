@@ -83,3 +83,77 @@ resource "azurerm_storage_account" "bootdiagnostic" {
   account_tier             = trim(var.account_type, "_GRS")
   account_replication_type = element(split("_", var.account_type), 1)
 }
+
+resource "azurerm_virtual_network" "azvnet" {
+  name                = "azurevnettff"
+  resource_group_name = azurerm_resource_group.resourcegroup.name
+  location            = azurerm_resource_group.resourcegroup.locations
+  address_space       = [element(var.address_space, 0)]
+}
+
+resource "azurerm_subnet" "azsubnet" {
+  name                 = "subnetfortfcourse"
+  resource_group_name  = azurerm_resource.group.resourcegroup.name
+  virtual_network_name = azurerm_virtual_network.azvnet.name
+  address_prefix       = element(var.address_space, 3)
+}
+
+resource "azurerm_public_ip" "publicip" {
+  count               = 3
+  name                = "publicipi${count.index}"
+  location            = azurerm_resource_group.resourcegroup.location
+  resource_group_name = azurerm_resource_group.resourcegroup.name
+  allocation_method   = "Static"
+}
+
+resource "azurerm_network_interface" "nic" {
+  count               = 3
+  name                = "vm-nic${count.index}"
+  location            = azurerm_resource_group.resourcegroup.location
+  resource_group_name = azurerm_resource_group.resourcegroup.name
+
+  ip_configuration {
+    name                          = "testconfig"
+    subnet_id                     = azurerm_subnet.azsubnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = element(azurerm_public_ip.publicip.*.id, count.index)
+  }
+}
+
+resource "random_password" "password" {
+  length = 8
+  special = true
+}
+
+resource "azurerm_virtual_machine" "vm_main" {
+  count = 3
+  name                  = "azurevm${count.index}"
+  location              = azurerm_resource_group.resourcegroup.location
+  resource_group_name   = azurerm_resource_group.resourcegroup.name
+  network_interface_ids = [azurerm_network_interface.main.id]
+  vm_size               = "Standard_DS1_v2"
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+  storage_os_disk {
+    name              = "myosdisk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = "testadmin"
+    admin_password = "Password1234!"
+  }
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+  tags = {
+    environment = "staging"
+  }
+}

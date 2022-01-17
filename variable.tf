@@ -27,3 +27,10 @@ variable "environment" {
 
 variable "account_type" {
 }
+
+variable "loc" {
+}
+
+variable "address_space" {
+}
+
