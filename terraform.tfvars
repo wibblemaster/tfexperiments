@@ -39,3 +39,4 @@ networkrule = [
     destination_address_prefix = "*"
   }
 ]
+environment = "demo"

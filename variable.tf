@@ -21,3 +21,6 @@ variable "dnsname" {
 
 variable "networkrule" {
 }
+
+variable "environment" {
+}

@@ -1,8 +1,8 @@
 terraform {
   backend "azurerm" {
-    resource_group_name  = "unixpoc_rg"
-    storage_account_name = "unixpocstorage"
-    container_name       = "unixpoccontainer0"
+    resource_group_name  = "aksclusters"
+    storage_account_name = "aksdetails"
+    container_name       = "terraformstatefile"
     key                  = "demo.terraform.tfstate"
   }
 }
