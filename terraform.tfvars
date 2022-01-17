@@ -39,4 +39,5 @@ networkrule = [
     destination_address_prefix = "*"
   }
 ]
-environment = "demo"
+environment  = "demo"
+account_type = "standard_GRS"

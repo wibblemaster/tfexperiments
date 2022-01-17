@@ -24,3 +24,6 @@ variable "networkrule" {
 
 variable "environment" {
 }
+
+variable "account_type" {
+}

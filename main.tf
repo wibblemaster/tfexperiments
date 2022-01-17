@@ -75,3 +75,11 @@ resource "azurerm_cosmosdb_account" "db" {
     failover_priority = 0
   }
 }
+
+resource "azurerm_storage_account" "bootdiagnostic" {
+  name                     = "bootdiagwibble"
+  resource_group_name      = azurerm_resource_group.resourcegroup.name
+  location                 = azurerm_resource_group.resourcegroup.location
+  account_tier             = trim(var.account_type, "_GRS")
+  account_replication_type = element(split("_", var.account_type), 1)
+}
