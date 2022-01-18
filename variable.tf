@@ -34,3 +34,5 @@ variable "loc" {
 variable "address_space" {
 }
 
+variable "tag2" {
+}

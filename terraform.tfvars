@@ -2,6 +2,7 @@ resourcename  = "unixpoc_rg"
 location      = "UK South"
 storagename   = "unixpocstorage"
 tags          = { environment = "demo", owner = "steveg", purpose = "unixpoc_demo" }
+tag2          = { resource = "virtualmachine", costcenter = "demotfcourse" }
 containername = "unixpoccontainer"
 dnsname       = ["gibbssm.com", "gibbssm1.com", "gibbssm2.com", "gibbssm3.com"]
 networkrule = [

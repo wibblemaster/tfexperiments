@@ -87,15 +87,15 @@ resource "azurerm_storage_account" "bootdiagnostic" {
 resource "azurerm_virtual_network" "azvnet" {
   name                = "azurevnettff"
   resource_group_name = azurerm_resource_group.resourcegroup.name
-  location            = azurerm_resource_group.resourcegroup.locations
+  location            = azurerm_resource_group.resourcegroup.location
   address_space       = [element(var.address_space, 0)]
 }
 
 resource "azurerm_subnet" "azsubnet" {
   name                 = "subnetfortfcourse"
-  resource_group_name  = azurerm_resource.group.resourcegroup.name
+  resource_group_name  = azurerm_resource_group.resourcegroup.name
   virtual_network_name = azurerm_virtual_network.azvnet.name
-  address_prefix       = element(var.address_space, 3)
+  address_prefixes     = [element(var.address_space, 3)]
 }
 
 resource "azurerm_public_ip" "publicip" {
@@ -121,16 +121,16 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "random_password" "password" {
-  length = 8
+  length  = 8
   special = true
 }
 
-resource "azurerm_virtual_machine" "vm_main" {
-  count = 3
+resource "azurerm_virtual_machine" "vm-main" {
+  count                 = 3
   name                  = "azurevm${count.index}"
   location              = azurerm_resource_group.resourcegroup.location
   resource_group_name   = azurerm_resource_group.resourcegroup.name
-  network_interface_ids = [azurerm_network_interface.main.id]
+  network_interface_ids = [element(azurerm_network_interface.nic.*.id, count.index)]
   vm_size               = "Standard_DS1_v2"
 
   storage_image_reference {
@@ -140,7 +140,7 @@ resource "azurerm_virtual_machine" "vm_main" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "myosdisk1"
+    name              = "myosdisk${count.index}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -148,12 +148,10 @@ resource "azurerm_virtual_machine" "vm_main" {
   os_profile {
     computer_name  = "hostname"
     admin_username = "testadmin"
-    admin_password = "Password1234!"
+    admin_password = random_password.password.result
   }
   os_profile_linux_config {
     disable_password_authentication = false
   }
-  tags = {
-    environment = "staging"
-  }
+  tags = merge(var.tags, var.tag2)
 }
