@@ -12,7 +12,7 @@ jobs:
 
 
   steps:
-    - user: action/checkout@master
+    - uses: action/checkout@master
     - name: 'Terraform Init'
       id: init
       run: terraform init
