@@ -3,6 +3,10 @@ variable "resourcename" {
 }
 
 variable "location" {
+  validation {
+    condition = can(regex("South$", var.location))
+    error_message = "The location should be in north of europe."
+  }
 }
 
 variable "storagename" {
