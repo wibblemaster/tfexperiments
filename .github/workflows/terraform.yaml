@@ -29,7 +29,7 @@ jobs:
         run: terraform validate
   
       - name: 'Terraform Apply'
-        id: init
+        id: apply
         run: terraform apply -auto-approve
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
