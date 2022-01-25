@@ -10,6 +10,12 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
 
+    env:
+      TF_VAR_client_id: ${{ secrets.TF_VAR_client_id}}
+      TF_VAR_client_secret: ${{ secrets.TF_VAR_client_secret }}
+      TF_VAR_subscription_id: ${{ secrets.TF_VAR_subscription_id }}
+      TF_VAR_tenant_id: ${{ secrets.TF_VAR_tenant_id }}
+
     steps:
       - uses: actions/checkout@v2
       - name: 'Terraform Init'
@@ -21,3 +27,9 @@ jobs:
       - name: "Terraform Validate"
         id: validate
         run: terraform validate
+  
+      - name: 'Terraform Apply'
+        id: init
+        run: terraform apply -auto-approve
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
